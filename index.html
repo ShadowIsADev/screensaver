@@ -3,68 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Screensaver</title>
+  <title>Custom Screensaver</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
-      align-items: flex-start;
-      background-image: url('https://img.freepik.com/free-photo/spectrum-flashes-coloured-light_23-2151792461.jpg'); /* Replace with your image URL */
-      background-size: cover;
-      background-position: center;
+      align-items: center;
+      flex-direction: column;
       height: 100vh;
+      background: url('https://img.freepik.com/free-photo/spectrum-flashes-coloured-light_23-2151792461.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: white;
       font-family: Arial, sans-serif;
-    }
-
-    #time-date-container {
       text-align: center;
-      margin-top: 30px; /* Adjust vertical position */
     }
-
     #time {
-      font-size: 96px;
-      font-weight: bold;
+      font-size: 80px;
       margin: 0;
     }
-
     #date {
-      font-size: 36px;
-      margin: 0;
+      font-size: 30px;
+      margin: 5px 0 20px;
+    }
+    #greeting {
+      font-size: 25px;
+      margin: 10px 0;
+    }
+    #weather {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+    #battery {
+      font-size: 20px;
+      margin: 10px 0;
     }
   </style>
 </head>
 <body>
-  <div id="time-date-container">
-    <p id="time">Loading time...</p>
-    <p id="date">Loading date...</p>
-  </div>
+  <div id="time">--:--</div>
+  <div id="date">Loading...</div>
+  <div id="greeting">Hello!</div>
+  <div id="weather">Loading weather...</div>
+  <div id="battery">Battery: --%</div>
 
   <script>
+    // Update time and date
     function updateTimeAndDate() {
       const now = new Date();
-      const options = { timeZone: "America/Chicago", hour12: true };
-      const timeString = now.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        ...options
-      });
-      const dateString = now.toLocaleDateString("en-US", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        ...options
-      });
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const isAm = hours < 12;
+      const formattedTime = `${hours % 12 || 12}:${minutes.toString().padStart(2, '0')} ${isAm ? 'AM' : 'PM'}`;
+      const formattedDate = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+      document.getElementById('time').textContent = formattedTime;
+      document.getElementById('date').textContent = formattedDate;
 
-      document.getElementById("time").textContent = timeString;
-      document.getElementById("date").textContent = dateString;
+      // Update greeting based on time
+      let greeting;
+      if (hours < 12) {
+        greeting = "Good Morning!";
+      } else if (hours < 18) {
+        greeting = "Good Afternoon!";
+      } else {
+        greeting = "Good Evening!";
+      }
+      document.getElementById('greeting').textContent = greeting;
     }
-
-    // Update every second
     setInterval(updateTimeAndDate, 1000);
     updateTimeAndDate();
+
+    // Update weather using WeatherAPI
+    async function updateWeather() {
+      const apiKey = "75878812bd994bbab9f23420241209"; // Replace with your WeatherAPI key
+      const location = "Bauxite, Arkansas"; // Replace with your city or location
+      try {
+        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}`);
+        const data = await response.json();
+        const temp = data.current.temp_f.toFixed(0); // Temperature in Fahrenheit
+        const condition = data.current.condition.text; // Weather condition
+        document.getElementById('weather').textContent = `${location}: ${temp}°F, ${condition}`;
+      } catch (error) {
+        document.getElementById('weather').textContent = "Unable to load weather.";
+      }
+    }
+    updateWeather();
+
+    // Update battery status
+    async function updateBattery() {
+      if ('getBattery' in navigator) {
+        const battery = await navigator.getBattery();
+        const update = () => {
+          const batteryLevel = (battery.level * 100).toFixed(0);
+          document.getElementById('battery').textContent = `Battery: ${batteryLevel}%`;
+        };
+        battery.addEventListener('levelchange', update);
+        update();
+      } else {
+        document.getElementById('battery').textContent = "Battery information unavailable.";
+      }
+    }
+    updateBattery();
   </script>
 </body>
 </html>
