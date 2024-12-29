@@ -17,9 +17,11 @@
       font-family: Arial, sans-serif;
       overflow: hidden;
     }
+    
+    /* Header section with time, date, and greeting */
     #header {
       text-align: center;
-      margin: 20px 0 0;
+      margin-top: 20px;
     }
     #time {
       font-size: 80px;
@@ -33,18 +35,24 @@
       font-size: 25px;
       margin: 10px 0;
     }
-    #weather-box, #battery-box {
+
+    /* Weather and Battery Boxes */
+    .info-box {
       position: absolute;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0, 0, 0, 0.6);
       color: white;
       padding: 20px;
       border-radius: 10px;
       font-size: 20px;
     }
+
+    /* Weather Box (top-left corner) */
     #weather-box {
       top: 20px;
       left: 20px;
     }
+
+    /* Battery Box (bottom-right corner) */
     #battery-box {
       bottom: 20px;
       right: 20px;
@@ -52,17 +60,20 @@
   </style>
 </head>
 <body>
+  <!-- Header Section -->
   <div id="header">
     <div id="time">--:--</div>
     <div id="date">Loading...</div>
     <div id="greeting">Hello!</div>
   </div>
 
-  <div id="weather-box">
+  <!-- Weather Box -->
+  <div id="weather-box" class="info-box">
     <div id="weather">Loading weather...</div>
   </div>
 
-  <div id="battery-box">
+  <!-- Battery Box -->
+  <div id="battery-box" class="info-box">
     <div id="battery">Battery: --%</div>
   </div>
 
