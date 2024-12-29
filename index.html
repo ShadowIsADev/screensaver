@@ -106,7 +106,7 @@
     // Update weather using WeatherAPI
     async function updateWeather() {
       const apiKey = "75878812bd994bbab9f23420241209"; // Your WeatherAPI key
-      const location = "Chicago"; // Replace with your desired city or location
+      const location = "Arkansas"; // Replace with your desired city or location
       try {
         const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}`);
         const data = await response.json();
