@@ -1,139 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Custom Screensaver</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background: url('https://img.freepik.com/free-photo/spectrum-flashes-coloured-light_23-2151792461.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
-    }
-    
-    /* Header section with time, date, and greeting */
-    #header {
-      text-align: center;
-      margin-top: 20px;
-    }
-    #time {
-      font-size: 80px;
-      margin: 0;
-    }
-    #date {
-      font-size: 30px;
-      margin: 5px 0;
-    }
-    #greeting {
-      font-size: 25px;
-      margin: 10px 0;
-    }
-
-    /* Weather and Battery Boxes */
-    .info-box {
-      position: absolute;
-      background-color: rgba(0, 0, 0, 0.6);
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      font-size: 20px;
-    }
-
-    /* Weather Box (top-left corner) */
-    #weather-box {
-      top: 20px;
-      left: 20px;
-    }
-
-    /* Battery Box (bottom-right corner) */
-    #battery-box {
-      bottom: 20px;
-      right: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Screensaver</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            background-image: url('https://img.freepik.com/free-photo/spectrum-flashes-coloured-light_23-2151792461.jpg');
+            background-size: cover;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .time-date {
+            margin-top: 20px;
+            font-size: 48px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .box {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            width: 40%;
+        }
+    </style>
 </head>
 <body>
-  <!-- Header Section -->
-  <div id="header">
-    <div id="time">--:--</div>
-    <div id="date">Loading...</div>
-    <div id="greeting">Hello!</div>
-  </div>
+    <div class="time-date" id="timeDate"></div>
+    <div class="container">
+        <div class="box" id="weather"></div>
+        <div class="box" id="battery"></div>
+    </div>
 
-  <!-- Weather Box -->
-  <div id="weather-box" class="info-box">
-    <div id="weather">Loading weather...</div>
-  </div>
+    <script>
+        function updateTimeDate() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'America/Chicago' };
+            const now = new Date().toLocaleString('en-US', options);
+            document.getElementById('timeDate').textContent = now;
+        }
 
-  <!-- Battery Box -->
-  <div id="battery-box" class="info-box">
-    <div id="battery">Battery: --%</div>
-  </div>
+        async function updateWeather() {
+            const apiKey = "75878812bd994bbab9f23420241209"; // Your WeatherAPI key
+            const location = "Arkansas"; // Weather location
+            try {
+                const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}`);
+                const data = await response.json();
+                const temp = data.current.temp_f.toFixed(0); // Temperature in Fahrenheit
+                const condition = data.current.condition.text; // Weather condition
+                document.getElementById('weather').textContent = `${location}: ${temp}°F, ${condition}`;
+            } catch (error) {
+                document.getElementById('weather').textContent = "Unable to load weather.";
+            }
+        }
 
-  <script>
-    // Update time and date
-    function updateTimeAndDate() {
-      const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const isAm = hours < 12;
-      const formattedTime = `${hours % 12 || 12}:${minutes.toString().padStart(2, '0')} ${isAm ? 'AM' : 'PM'}`;
-      const formattedDate = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-      document.getElementById('time').textContent = formattedTime;
-      document.getElementById('date').textContent = formattedDate;
+        function updateBattery() {
+            navigator.getBattery().then(function(battery) {
+                const level = Math.round(battery.level * 100);
+                const charging = battery.charging ? " (Charging)" : "";
+                document.getElementById('battery').textContent = `Battery: ${level}%${charging}`;
+            });
+        }
 
-      // Update greeting based on time
-      let greeting;
-      if (hours < 12) {
-        greeting = "Good Morning!";
-      } else if (hours < 18) {
-        greeting = "Good Afternoon!";
-      } else {
-        greeting = "Good Evening!";
-      }
-      document.getElementById('greeting').textContent = greeting;
-    }
-    setInterval(updateTimeAndDate, 1000);
-    updateTimeAndDate();
-
-    // Update weather using WeatherAPI
-    async function updateWeather() {
-      const apiKey = "75878812bd994bbab9f23420241209"; // Your WeatherAPI key
-      const location = "Arkansas"; // Replace with your desired city or location
-      try {
-        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}`);
-        const data = await response.json();
-        const temp = data.current.temp_f.toFixed(0); // Temperature in Fahrenheit
-        const condition = data.current.condition.text; // Weather condition
-        document.getElementById('weather').textContent = `${location}: ${temp}°F, ${condition}`;
-      } catch (error) {
-        document.getElementById('weather').textContent = "Unable to load weather.";
-      }
-    }
-    updateWeather();
-
-    // Update battery status
-    async function updateBattery() {
-      if ('getBattery' in navigator) {
-        const battery = await navigator.getBattery();
-        const update = () => {
-          const batteryLevel = (battery.level * 100).toFixed(0);
-          document.getElementById('battery').textContent = `Battery: ${batteryLevel}%`;
-        };
-        battery.addEventListener('levelchange', update);
-        update();
-      } else {
-        document.getElementById('battery').textContent = "Battery information unavailable.";
-      }
-    }
-    updateBattery();
-  </script>
+        setInterval(updateTimeDate, 1000);
+        updateWeather();
+        updateBattery();
+        setInterval(updateBattery, 60000); // Update battery status every minute
+    </script>
 </body>
 </html>
