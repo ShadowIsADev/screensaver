@@ -3,55 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Screensaver</title>
+  <title>Dashboard Screensaver</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT07FqEobH-EEDM3oXmR4NDHLpK6F6cm6728g&s') no-repeat center center fixed;
-      background-size: cover;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
+      background-image: url('your-background-image.jpg'); /* Replace with your image URL */
+      background-size: cover;
+      background-position: center;
       height: 100vh;
+      color: white;
+      font-family: Arial, sans-serif;
     }
-    .time {
-      font-size: 8em;
-      text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+
+    #time {
+      font-size: 96px;
+      font-weight: bold;
+      margin: 0;
     }
-    .date {
-      font-size: 3em;
-      margin-top: 0.5em;
-      text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+
+    #date {
+      font-size: 36px;
+      margin: 10px 0 0 0;
     }
   </style>
 </head>
 <body>
-  <div class="time" id="time">--:--</div>
-  <div class="date" id="date">Loading...</div>
+  <div>
+    <p id="time">Loading time...</p>
+    <p id="date">Loading date...</p>
+  </div>
 
   <script>
-    // Function to update the time and date
-    function updateTime() {
+    function updateTimeAndDate() {
       const now = new Date();
-      // Convert time to CST
-      const options = { timeZone: "America/Chicago", hour12: true, hour: 'numeric', minute: 'numeric' };
-      const time = new Intl.DateTimeFormat('en-US', options).format(now);
+      const options = { timeZone: "America/Chicago", hour12: true };
+      const timeString = now.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        ...options
+      });
+      const dateString = now.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        ...options
+      });
 
-      // Format the date
-      const dateOptions = { timeZone: "America/Chicago", weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
-      const date = new Intl.DateTimeFormat('en-US', dateOptions).format(now);
-
-      document.getElementById('time').textContent = time;
-      document.getElementById('date').textContent = date;
+      document.getElementById("time").textContent = timeString;
+      document.getElementById("date").textContent = dateString;
     }
 
-    // Update the time every second
-    setInterval(updateTime, 1000);
-    updateTime();
+    // Update every second
+    setInterval(updateTimeAndDate, 1000);
+    updateTimeAndDate();
   </script>
 </body>
 </html>
