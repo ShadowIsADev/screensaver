@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Screensaver</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT07FqEobH-EEDM3oXmR4NDHLpK6F6cm6728g&s') no-repeat center center fixed;
+      background-size: cover;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .time {
+      font-size: 8em;
+      text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+    }
+    .date {
+      font-size: 3em;
+      margin-top: 0.5em;
+      text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div class="time" id="time">--:--</div>
+  <div class="date" id="date">Loading...</div>
+
+  <script>
+    // Function to update the time and date
+    function updateTime() {
+      const now = new Date();
+      // Convert time to CST
+      const options = { timeZone: "America/Chicago", hour12: true, hour: 'numeric', minute: 'numeric' };
+      const time = new Intl.DateTimeFormat('en-US', options).format(now);
+
+      // Format the date
+      const dateOptions = { timeZone: "America/Chicago", weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+      const date = new Intl.DateTimeFormat('en-US', dateOptions).format(now);
+
+      document.getElementById('time').textContent = time;
+      document.getElementById('date').textContent = date;
+    }
+
+    // Update the time every second
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+</body>
+</html>
