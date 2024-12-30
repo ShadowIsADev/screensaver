@@ -11,13 +11,21 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      background: url('https://img.freepik.com/free-photo/spectrum-flashes-coloured-light_23-2151792461.jpg') no-repeat center center fixed;
-      background-size: cover;
+      background: linear-gradient(135deg, #ff7eb3, #8e44ad, #3498db, #2ecc71);
+      background-size: 300% 300%;
+      animation: gradientAnimation 15s ease infinite;
       color: white;
       font-family: Arial, sans-serif;
       overflow: hidden;
     }
-    
+
+    /* Gradient animation */
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
     /* Header section with time, date, and greeting */
     #header {
       text-align: center;
