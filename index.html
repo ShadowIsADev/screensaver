@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Custom Screensaver</title>
+  <title>New Year's Countdown</title>
   <style>
     body {
       margin: 0;
@@ -19,32 +19,32 @@
       overflow: hidden;
     }
 
-    /* Gradient animation */
     @keyframes gradientAnimation {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
 
-    /* Header section with time, date, and greeting */
     #header {
       text-align: center;
       margin-top: 20px;
     }
+
     #time {
       font-size: 80px;
       margin: 0;
     }
+
     #date {
       font-size: 30px;
       margin: 5px 0;
     }
+
     #greeting {
       font-size: 25px;
       margin: 10px 0;
     }
 
-    /* Weather, Battery, and Countdown Boxes */
     .info-box {
       position: absolute;
       background-color: rgba(0, 0, 0, 0.6);
@@ -54,50 +54,81 @@
       font-size: 20px;
     }
 
-    /* Weather Box (top-left corner) */
-    #weather-box {
-      top: 20px;
-      left: 20px;
-    }
-
-    /* Battery Box (bottom-right corner) */
-    #battery-box {
-      bottom: 20px;
-      right: 20px;
-    }
-
-    /* Countdown Box (top-right corner) */
     #countdown-box {
       top: 20px;
       right: 20px;
     }
+
+    #popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 40px;
+      text-align: center;
+      flex-direction: column;
+      z-index: 1000;
+      display: none;
+    }
+
+    #popup button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 20px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #popup button:hover {
+      background-color: #666;
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: white;
+      opacity: 0.8;
+      z-index: 999;
+      animation: confettiFall 5s linear infinite;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(0) rotate(0);
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Header Section -->
   <div id="header">
     <div id="time">--:--</div>
     <div id="date">Loading...</div>
     <div id="greeting">Hello!</div>
   </div>
 
-  <!-- Weather Box -->
-  <div id="weather-box" class="info-box">
-    <div id="weather">Loading weather...</div>
-  </div>
-
-  <!-- Battery Box -->
-  <div id="battery-box" class="info-box">
-    <div id="battery">Battery: --%</div>
-  </div>
-
-  <!-- Countdown Box -->
   <div id="countdown-box" class="info-box">
-    <div id="countdown">New Years is in: --:--:--</div>
+    <div id="countdown">New Year is in: --:--:--</div>
+  </div>
+
+  <div id="popup">
+    <div>Happy New Year's!</div>
+    <button onclick="closePopup()">Close</button>
   </div>
 
   <script>
-    // Update time and date
     function updateTimeAndDate() {
       const now = new Date();
       const hours = now.getHours();
@@ -107,72 +138,54 @@
       const formattedDate = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
       document.getElementById('time').textContent = formattedTime;
       document.getElementById('date').textContent = formattedDate;
-
-      let greeting;
-      if (hours < 12) {
-        greeting = "Good Morning!";
-      } else if (hours < 18) {
-        greeting = "Good Afternoon!";
-      } else {
-        greeting = "Good Evening!";
-      }
-      document.getElementById('greeting').textContent = greeting;
     }
     setInterval(updateTimeAndDate, 1000);
     updateTimeAndDate();
 
-    // Update weather
-    async function updateWeather() {
-      const apiKey = "75878812bd994bbab9f23420241209"; // Your WeatherAPI key
-      const location = "Arkansas";
-      try {
-        const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}`);
-        const data = await response.json();
-        const temp = data.current.temp_f.toFixed(0);
-        const condition = data.current.condition.text;
-        document.getElementById('weather').textContent = `${location}: ${temp}°F, ${condition}`;
-      } catch (error) {
-        document.getElementById('weather').textContent = "Unable to load weather.";
-      }
-    }
-    updateWeather();
-
-    // Update battery
-    async function updateBattery() {
-      if ('getBattery' in navigator) {
-        const battery = await navigator.getBattery();
-        const update = () => {
-          const batteryLevel = (battery.level * 100).toFixed(0);
-          document.getElementById('battery').textContent = `Battery: ${batteryLevel}%`;
-        };
-        battery.addEventListener('levelchange', update);
-        update();
-      } else {
-        document.getElementById('battery').textContent = "Battery information unavailable.";
-      }
-    }
-    updateBattery();
-
-    // Update countdown
     function updateCountdown() {
-      const eventDate = new Date('2024-12-31T23:59:59'); // Replace with your event date
+      const eventDate = new Date('2024-12-31T23:59:59');
       const now = new Date();
       const diff = eventDate - now;
 
       if (diff <= 0) {
-        document.getElementById('countdown').textContent = "The event has started!";
+        document.getElementById('countdown').textContent = "Happy New Year's!";
+        triggerPopup();
+        startConfetti();
         return;
       }
 
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-      document.getElementById('countdown').textContent = `New Years is in ${days}d ${hours}h ${minutes}m ${seconds}s`;
+      document.getElementById('countdown').textContent = `New Year is in: ${hours}h ${minutes}m ${seconds}s`;
     }
     setInterval(updateCountdown, 1000);
     updateCountdown();
+
+    function triggerPopup() {
+      document.getElementById('popup').style.display = 'flex';
+    }
+
+    function closePopup() {
+      document.getElementById('popup').style.display = 'none';
+    }
+
+    function startConfetti() {
+      const body = document.body;
+      for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.left = `${Math.random() * 100}vw`;
+        confetti.style.animationDelay = `${Math.random() * 5}s`;
+        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        body.appendChild(confetti);
+
+        setTimeout(() => {
+          confetti.remove();
+        }, 5000);
+      }
+    }
   </script>
 </body>
 </html>
