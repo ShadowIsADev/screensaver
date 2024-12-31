@@ -199,27 +199,33 @@
     updateBattery();
 
     // Countdown Timer
-    function updateCountdown() {
-      const now = new Date();
-      const eventDate = new Date('December 31, 2024 01:05:00');
-      const diff = nextYear - now;
+    const eventDate = new Date('December 25, 2024 12:00:00'); // Example: Christmas countdown
 
-      if (diff <= 0) {
-        document.getElementById('countdown').textContent = "Happy New Year's!";
-        clearInterval(countdownInterval);
-        showPopup();
-        startConfetti();
-        return;
-      }
+function updateCountdown() {
+  const now = new Date();
+  const difference = eventDate - now; // Time difference in milliseconds
 
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      document.getElementById('countdown').textContent = `New Year's is in ${hours}h ${minutes}m ${seconds}s`;
-    }
+  if (isNaN(eventDate)) {
+    document.getElementById('countdown').textContent = "Invalid event date!";
+    return;
+  }
 
-    const countdownInterval = setInterval(updateCountdown, 1000);
-    updateCountdown();
+  if (difference <= 0) {
+    document.getElementById('countdown').textContent = "The event has started!";
+    return;
+  }
+
+  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+  document.getElementById('countdown').textContent =
+    `${days}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
 
     // Popup
     function showPopup() {
