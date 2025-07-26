@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Custom Screensaver</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      display: flex;
-      flex-direction: column;
       height: 100vh;
       background: linear-gradient(135deg, #ff7eb3, #8e44ad, #3498db, #2ecc71);
       background-size: 300% 300%;
@@ -17,6 +15,13 @@
       color: white;
       font-family: Arial, sans-serif;
       overflow: hidden;
+
+      /* Flexbox centering */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
     }
 
     @keyframes gradientAnimation {
@@ -25,21 +30,20 @@
       100% { background-position: 0% 50%; }
     }
 
-    #header {
-      text-align: center;
-      margin-top: 20px;
-    }
     #time {
       font-size: 80px;
       margin: 0;
+      line-height: 1;
     }
+
     #date {
       font-size: 30px;
-      margin: 5px 0;
+      margin: 5px 0 0 0;
     }
+
     #greeting {
       font-size: 25px;
-      margin: 10px 0;
+      margin: 10px 0 0 0;
     }
 
     .info-box {
@@ -59,15 +63,6 @@
     #battery-box {
       bottom: 20px;
       right: 20px;
-    }
-
-    @keyframes fall {
-      from {
-        transform: translateY(-100vh) translateX(0);
-      }
-      to {
-        transform: translateY(100vh) translateX(calc(-50vw + 50%));
-      }
     }
   </style>
 </head>
